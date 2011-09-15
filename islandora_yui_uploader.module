@@ -7,6 +7,7 @@
  *
  * To change the template for this generated file go to
  * Window - Preferences - PHPeclipse - PHP - Code Templates
+ * The guts of this module load the js and create divs see IslandoraYuiUploder.inc.
  */
 
 /**
@@ -26,6 +27,12 @@ function islandora_yui_uploader_admin_settings_submit($form, $form_values) {
   drupal_set_message("Custom form handler.");
 }
 
+/**
+ *currently not used we are sending to upload.php so not using this path
+ * in the future hope to have the uploader.php functionality kicked off by
+ * hitting this path
+ * @return <type>
+ */
 function islandora_yui_uploader_viewer_menu() {
   $items['islandora/yui/upload'] = array(
     'title' => t('Yui Uploader path'),
@@ -37,6 +44,10 @@ function islandora_yui_uploader_viewer_menu() {
   return $items;
 }
 
+/**
+ * Not used as the posts are sent to uploader.php
+ * want to move the functionality here though
+ */
 function islandora_yui_uploader_upload() {
   $yui_tmp_directory_name = $_POST['yui_form_build_id']; //use this as it should be unique to our form
   $drupal_tmp_dir = $_POST['dr_tmp_dir']; //passed as a postvar
