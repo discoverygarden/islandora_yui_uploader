@@ -1,0 +1,27 @@
+/* 
+    Document   : upload_button.css
+    Created on : Sep 13, 2011, 9:12:12 AM
+    Author     : paulpound
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+/* 
+   TODO customize this sample style
+   Syntax recommendation http://www.w3.org/TR/REC-CSS2/
+*/
+
+	#selectFilesLink a, #uploadFilesLink a, #clearFilesLink a {
+	    color: #0000CC;
+	    background-color: #FFFFFF;
+	}
+
+	#selectFilesLink a:visited, #uploadFilesLink a:visited, #clearFilesLink a:visited {
+	    color: #0000CC;
+	    background-color: #FFFFFF;
+	}
+
+	#uploadFilesLink a:hover, #clearFilesLink a:hover {
+	    color: #FFFFFF;
+	    background-color: #000000;
+	}

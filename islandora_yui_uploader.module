@@ -1,0 +1,134 @@
+<?php
+
+// $Id$
+
+/*
+ * Created 2011
+ *
+ * To change the template for this generated file go to
+ * Window - Preferences - PHPeclipse - PHP - Code Templates
+ */
+
+/**
+ * Drupal hook for admin form
+ * fedora_repository_name is the name of the top level collection this module will query
+ * fedora_repository_pid is the name of the top level pid.
+ * Stores this info in the drupal variables table.
+ * the name and pid can also be passed as url parameters
+ */
+function islandora_yui_uploader_admin() {
+  //currently does nothing here for convience in case we want it
+  return "";
+}
+
+function islandora_yui_uploader_admin_settings_submit($form, $form_values) {
+  //currently does nothing here for convience in case we want it
+  drupal_set_message("Custom form handler.");
+}
+
+function islandora_yui_uploader_viewer_menu() {
+  $items['islandora/yui/upload'] = array(
+    'title' => t('Yui Uploader path'),
+    'description' => t('Handles yui uploader posts.'),
+    'page callback' => 'islandora_yui_uploader_upload',
+    //'access arguments' => array(), //don't think we can use this as the uploader is based on flash and does not send a session_id
+    'type' => MENU_CALLBACK,
+  );
+  return $items;
+}
+
+function islandora_yui_uploader_upload() {
+  $yui_tmp_directory_name = $_POST['yui_form_build_id']; //use this as it should be unique to our form
+  $drupal_tmp_dir = $_POST['dr_tmp_dir']; //passed as a postvar
+  $new_directory = $drupal_tmp_dir . '/' . $yui_tmp_directory_name;
+//create a new directory based on the form_id and then put the files there so we can act on them when the form is submitted
+  if (isset($drupal_tmp_dir)) {
+    if (!file_exists($new_directory)) {
+      $directory_ok = mkdir($new_directory);
+    }
+  }
+  else {
+    //TODO: should do something here like return an error to the form uploader
+    exit();
+  }
+//if(!$directory_ok){//have to see how this failed before we exit as it looks like we get multiple posts so the directory may have already been created
+  //TODO: should do something here like return an error to the form uploader
+//  exit();
+//}
+  foreach ($_FILES as $fieldName => $file) {
+    move_uploaded_file($file['tmp_name'], $new_directory . '/' . $file['name']); //move to
+    echo (" ");
+  }
+//we've put the file in the correct location so we have to wait for a form to be submitted to act on them
+//there will be times when someone uploads the files but does not submit the form so we would need a cron
+//or something to clean the tmp directory.  Maybe we should create a yuiupload directory in the temp directory
+//then we would only have to worry about it.
+  exit();
+}
+
+
+
+/**
+ * AN EXAMPLE OF HOW YOU COULD USE THIS IN YOUR MODULE
+ * @param <type> $form
+ * @param <type> $form_state
+ * @param <type> $form_id
+ * alter the ingest datastream form so we can add datastreams as required
+ * we check in the handler for the appropriate cmodel to act on
+ *
+ */
+/*function islandora_oai_form_alter(&$form, $form_state, $form_id){
+module_load_include('inc','islandora_yui_uploader','IslandoraYuiUploader');
+$uploader = new IslandoraYuiUploader();
+  if ($form_id == "fedora_repository_ingest_form") {
+
+    if (isset($form_state['values']['models']) && strstr($form_state['values']['models'], '/', TRUE) == 'demo:DualResImage') {
+    $form['#suffix'] = $uploader->islandora_yui_uploader_add_js($form_state['values']); //the div and js are loaded after the form element closes.  Doing it in the form seemed to cause problems
+    }
+    //$form['#submit'][] = 'sidora_rels_ext_handler'; //add a new handler
+  }
+}*/
+
+/**
+ * AN EXAMPLE OF HOW YOU COULD USE THIS IN YOUR MODULE ON A FORM SUBMIT
+ * files have been uploaded via yui multi file uploader so we process them starting with this function
+ * the files have been stored in drupal temp directory in a subdirectory based on the form_id
+ * this directory will be removed after processing
+ * @param <type> $form_state
+ */
+/* function islandora_yui_uploader_ingest_images($form_state) {
+  $tmp_directory = file_directory_temp(); //drupals tmp directory probably the same as sys temp
+  $form_build_id = $form_state['values']['yui_form_build_id']; //the id of the form being submitted should match the directory name, we injected this into the form before we post the upload
+  $files_dir = "$tmp_directory/$form_build_id";
+  $collection_pid = $form_state['values']['pid'];
+  $files = scandir("$files_dir");
+  foreach ($files as $file) {//not interested in directories we dumped all uploaded files into one directory
+  if (!is_dir($file) && $file != '.' && $file != '..' && $file != '__MACOSX') {
+  $full_path = "$files_dir/$file";
+  $new_pid = Fedora_Item::get_next_PID_in_namespace('si');
+  $object_array = sidora_createSkeletonObject($file, $new_pid, $collection_pid, 'si:cameraTrapImageCModel');//this function does not exist in this module you would have to create it shown here for convience only
+  if (!$object_array) {
+  drupal_set_message(t("failed adding @pid to collection @collection_pid", array('@pid' => $new_pid, '@collection_pid' => $collection_pid)));
+  }
+  $new_object_label = $object_array[0];
+  $object = $object_array[1];
+  $mime = new MimeClass();
+  $m_type = $mime->get_mimetype($file);
+  $controlGroup = 'M';
+  //$stream_id = $file; //substr($file, 0, strrpos($file, '.'));
+  $stream_id = 'IMAGE';
+  $object->add_datastream_from_file($full_path, $stream_id, $file, $m_type, $controlGroup, 'Added IMAGE datastream at ingest');
+  if (!file_delete($full_path)) {
+  drupal_set_message(t("failed removing temp file @file ", array('@file' => $full_path)));
+  }
+  }
+  }
+  return rmdir($files_dir);
+  } */
+
+
+
+
+
+
+

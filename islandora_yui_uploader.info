@@ -1,0 +1,7 @@
+; $Id$
+name = islandora yui uploader
+dependencies[] = fedora_repository
+description = multi file uploader based on yui uploader
+package = Fedora Repository
+version = 6.1dev
+core = 6.x
