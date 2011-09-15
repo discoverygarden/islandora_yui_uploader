@@ -6,6 +6,8 @@
  * Created 2011
  *
  * The guts of this module load the js and create divs see IslandoraYuiUploder.inc.
+ * TODO: make a admin interface/functions so we can pass what filetypes are allowed
+ * file sizes etc.  These could then be injected into the js similar to how we do the paths
  */
 
 /**
