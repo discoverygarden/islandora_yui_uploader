@@ -1,39 +1,57 @@
 <?php
-class IslandoraYuiUploader{
-  /**
- * add required js files and somd of the js as a string here so we can inject paths like
- * YAHOO.widget.Uploader.SWFURL = "/'.drupal_get_path('module','islandora_yui_uploader').'/assets/uploader.swf";
- * var uploader = new YAHOO.widget.Uploader( "uploaderUI","/'.drupal_get_path('module','islandora_yui_uploader').'/js/assets/selectFileButton.png" );
- *
- * Also creates a div so the multifile uploader has a place to exist
- */
-function islandora_yui_uploader_add_js(&$form_values) {
-  //$form_build_id = $form_values['form_token'];
-  $tmp_directory = file_directory_temp();
-  //create a unique id here, we can't use form_build_id as it is per form build not per form so
-  //the form_build_id could change per form, the form token is also based on session id
-  //so can be the same for different forms
-  //$form_build_id = 'yui-form-' . drupal_hash_base64(uniqid(mt_rand(), TRUE) . mt_rand());
-  $form_build_id = 'yui-form-'.drupal_get_token(mt_rand());
-  $form_values['yui_form_build_id'] = $form_build_id; //so we can use this when we submit the form
-  global $user;
-  drupal_add_js(drupal_get_path('module', 'islandora_yui_uploader') . '/js/yahoo-dom-event.js');
-  drupal_add_js(drupal_get_path('module', 'islandora_yui_uploader') . '/js/element-min.js');
-  drupal_add_js(drupal_get_path('module', 'islandora_yui_uploader') . '/js/uploader.js');
-  drupal_add_js(drupal_get_path('module', 'islandora_yui_uploader') . '/js/yuiloader-min.js');
-  drupal_add_js(drupal_get_path('module', 'islandora_yui_uploader') . '/js/event-min.js');
-  drupal_add_js(drupal_get_path('module', 'islandora_yui_uploader') . '/js/dom-min.js');
-  drupal_add_js(drupal_get_path('module', 'islandora_yui_uploader') . '/js/logger-min.js');
-  drupal_add_js(drupal_get_path('module', 'islandora_yui_uploader') . '/js/uploader-debug.js');
-  drupal_add_js(drupal_get_path('module', 'islandora_yui_uploader') . '/js/datasource-min.js');
-  drupal_add_js(drupal_get_path('module', 'islandora_yui_uploader') . '/js/event-delegate-min.js');
-  drupal_add_js(drupal_get_path('module', 'islandora_yui_uploader') . '/js/datatable-min.js');
-  drupal_add_js(drupal_get_path('module', 'islandora_yui_uploader') . '/js/button-min.js');
 
-  drupal_add_css(drupal_get_path('module', 'islandora_yui_uploader') . '/css/upload_button.css');
-  drupal_add_css(drupal_get_path('module', 'islandora_yui_uploader') . '/css/logger.css');
-  drupal_add_css(drupal_get_path('module', 'islandora_yui_uploader') . '/css/datatable.css');
-  $div = '<strong>Please upload files before clicking Submit</strong><br /><div id="uiElements" style="display:inline;">
+class IslandoraYuiUploader {
+
+  /**
+   *
+   * @param string $allowed_file_types
+   * @return string
+   */
+  function get_allowed_files_string($allowed_file_types = NULL){
+    if(!isset($allowed_file_types)){
+      return '{description:"Images", extensions:"*.jpg;*.png;*.gif"},{description:"Videos", extensions:"*.avi;*.mov;*.mpg"}';//arbitraryly chosen default
+    }
+    return $allowed_file_types;
+  }
+
+  /**
+   * @param array $form_values
+   * @param array $allowed_file_types
+   * @return string
+   * add required js files and somd of the js as a string here so we can inject paths like
+   * YAHOO.widget.Uploader.SWFURL = "/'.drupal_get_path('module','islandora_yui_uploader').'/assets/uploader.swf";
+   * var uploader = new YAHOO.widget.Uploader( "uploaderUI","/'.drupal_get_path('module','islandora_yui_uploader').'/js/assets/selectFileButton.png" );
+   *
+   * Also creates a div so the multifile uploader has a place to exist
+   */
+  function islandora_yui_uploader_add_js(&$form_values, $allowed_file_types = NULL) {
+    //$form_build_id = $form_values['form_token'];
+    $tmp_directory = file_directory_temp();
+    $allowed_files_string = $this->get_allowed_files_string($allowed_file_types);
+    //create a unique id here, we can't use form_build_id as it is per form build not per form so
+    //the form_build_id could change per form, the form token is also based on session id
+    //so can be the same for different forms
+    //$form_build_id = 'yui-form-' . drupal_hash_base64(uniqid(mt_rand(), TRUE) . mt_rand());
+    $form_build_id = 'yui-form-' . drupal_get_token(mt_rand());
+    $form_values['yui_form_build_id'] = $form_build_id; //so we can use this when we submit the form
+    global $user;
+    drupal_add_js(drupal_get_path('module', 'islandora_yui_uploader') . '/js/yahoo-dom-event.js');
+    drupal_add_js(drupal_get_path('module', 'islandora_yui_uploader') . '/js/element-min.js');
+    drupal_add_js(drupal_get_path('module', 'islandora_yui_uploader') . '/js/uploader.js');
+    drupal_add_js(drupal_get_path('module', 'islandora_yui_uploader') . '/js/yuiloader-min.js');
+    drupal_add_js(drupal_get_path('module', 'islandora_yui_uploader') . '/js/event-min.js');
+    drupal_add_js(drupal_get_path('module', 'islandora_yui_uploader') . '/js/dom-min.js');
+    drupal_add_js(drupal_get_path('module', 'islandora_yui_uploader') . '/js/logger-min.js');
+    drupal_add_js(drupal_get_path('module', 'islandora_yui_uploader') . '/js/uploader-debug.js');
+    drupal_add_js(drupal_get_path('module', 'islandora_yui_uploader') . '/js/datasource-min.js');
+    drupal_add_js(drupal_get_path('module', 'islandora_yui_uploader') . '/js/event-delegate-min.js');
+    drupal_add_js(drupal_get_path('module', 'islandora_yui_uploader') . '/js/datatable-min.js');
+    drupal_add_js(drupal_get_path('module', 'islandora_yui_uploader') . '/js/button-min.js');
+
+    drupal_add_css(drupal_get_path('module', 'islandora_yui_uploader') . '/css/upload_button.css');
+    drupal_add_css(drupal_get_path('module', 'islandora_yui_uploader') . '/css/logger.css');
+    drupal_add_css(drupal_get_path('module', 'islandora_yui_uploader') . '/css/datatable.css');
+    $div = '<strong>Please upload files before clicking Submit</strong><br /><div id="uiElements" style="display:inline;">
 		<div id="uploaderContainer">
 			<div id="uploaderOverlay" style="position:absolute; z-index:2"></div>
 			<div id="selectFilesLink" style="z-index:1"><a id="selectLink" href="#">Select Files</a></div>
@@ -52,7 +70,7 @@ function islandora_yui_uploader_add_js(&$form_values) {
 
 <div id="dataTableContainer"></div>';
 
-  $js = '<script type="text/javascript">
+    $js = '<script type="text/javascript">
 
 YAHOO.util.Event.onDOMReady(function () {
 var uiLayer = YAHOO.util.Dom.getRegion(\'selectLink\');
@@ -115,8 +133,7 @@ YAHOO.util.Dom.setStyle(overlay, \'height\', uiLayer.bottom-uiLayer.top + "px");
 		uploader.setAllowMultipleFiles(true);
 
 		// New set of file filters.
-		var ff = new Array({description:"Images", extensions:"*.jpg;*.png;*.gif"},
-		                   {description:"Videos", extensions:"*.avi;*.mov;*.mpg"});
+		var ff = new Array('.$allowed_files_string.');
 
 		// Apply new set of file filters to the uploader.
 		uploader.setFileFilters(ff);
@@ -135,7 +152,7 @@ YAHOO.util.Dom.setStyle(overlay, \'height\', uiLayer.bottom-uiLayer.top + "px");
     //we are going to inject the form build id of the form as we upload the files first then submit the form and there is no real link between the two.  We will create a tmp directory based on the form_id then read from that directory when the form is submitted
     //we have to do stuff like this as the actual file upload is based on flash and it is not aware of the sessionid.
     //also inject the drupal tmp directory via post variables
-    uploader.uploadAll("/' . drupal_get_path('module', 'sidora_islandora') . '/uploader.php","POST",{dr_tmp_dir:"' . $tmp_directory . '",yui_form_build_id:"' . $form_build_id . '",user:"' . $user->name . '"},"Filedata");
+    uploader.uploadAll("/' . drupal_get_path('module', 'islandora_yui_uploader') . '/uploader.php","POST",{dr_tmp_dir:"' . $tmp_directory . '",yui_form_build_id:"' . $form_build_id . '",user:"' . $user->name . '"},"Filedata");
 	}
 	}
 
@@ -190,7 +207,7 @@ YAHOO.util.Dom.setStyle(overlay, \'height\', uiLayer.bottom-uiLayer.top + "px");
 	function onUploadProgress(event) {
 		rowNum = fileIdHash[event["id"]];
 		prog = Math.round(100*(event["bytesLoaded"]/event["bytesTotal"]));
-		progbar = "<div style=\'height:5px;width:100px;background-color:#CCC;\'><div style=\'height:5px;background-color:#F00;width:" + prog + "px;\'></div></div>";
+		progbar = "<div style=\'height:5px;width:100px;background-color:#CCC;\'><div style=\'height:5px;background-color:#00F;width:" + prog + "px;\'></div></div>";
 		singleSelectDataTable.updateRow(rowNum, {name: dataArr[rowNum]["name"], size: dataArr[rowNum]["size"], progress: progbar});
 	}
 
@@ -198,7 +215,7 @@ YAHOO.util.Dom.setStyle(overlay, \'height\', uiLayer.bottom-uiLayer.top + "px");
 	function onUploadComplete(event) {
 		rowNum = fileIdHash[event["id"]];
 		prog = Math.round(100*(event["bytesLoaded"]/event["bytesTotal"]));
-		progbar = "<div style=\'height:5px;width:100px;background-color:#CCC;\'><div style=\'height:5px;background-color:#F00;width:100px;\'></div></div>";
+		progbar = "<div style=\'height:5px;width:100px;background-color:#CCC;\'><div style=\'height:5px;background-color:#00F;width:100px;\'></div></div>";
 		singleSelectDataTable.updateRow(rowNum, {name: dataArr[rowNum]["name"], size: dataArr[rowNum]["size"], progress: progbar});
 	}
 
@@ -220,8 +237,9 @@ YAHOO.util.Dom.setStyle(overlay, \'height\', uiLayer.bottom-uiLayer.top + "px");
 	}
 </script>';
 
-  return $div . $js;
-}
+    return $div . $js;
+  }
+
 }
 
 ?>

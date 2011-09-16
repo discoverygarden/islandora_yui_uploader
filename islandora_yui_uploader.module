@@ -28,9 +28,10 @@ function islandora_yui_uploader_admin_settings_submit($form, $form_values) {
 }
 
 /**
- *currently not used we are sending to upload.php so not using this path
+ * currently not used we are sending to upload.php so not using this path
  * in the future hope to have the uploader.php functionality kicked off by
- * hitting this path
+ * hitting this path or an actual drupal form
+ * there is an article with some info here http://drupal.org/node/287776
  * @return <type>
  */
 function islandora_yui_uploader_viewer_menu() {
@@ -42,6 +43,37 @@ function islandora_yui_uploader_viewer_menu() {
     'type' => MENU_CALLBACK,
   );
   return $items;
+}
+
+/**
+ * we want to clean up any files that were uploaded and not processed
+ * this function will be called when cron is called
+ */
+function islandora_yui_uploader_cron() {
+ watchdog('islandora_yui_uploader','islandora_yui_uploader looking for files to delete');
+ $expire_time = 300;//anything over 300 minutes old will be deleted (may need to adjust this)
+  $tmp = file_directory_temp();
+  $dirs = scandir($tmp);
+  foreach ($dirs as $dir) {//only one level deep
+	$full_path = $tmp.'/'.$dir;
+	//watchdog('islandora_yui_uploader','checking dir @full_path', array('@full_path'=> $full_path));
+    if (file_check_directory($full_path) && substr($dir, 0, 9) === 'yui-form-' ) {
+	  $ctime = filectime($full_path);
+      $file_age = time() - $ctime;
+      if ($file_age > ($expire_time * 60)) {
+        watchdog('islandora_yui_uploader','found expired dir @full_path deleting files', array('@full_path'=> $full_path));
+        $files = scandir($full_path);
+        foreach($files as $file){
+          $succeeded = file_delete($full_path.'/'.$file);
+          if($succeeded){
+            watchdog('islandora_yui_uploader','deleted file @full_path ', array('@full_path'=> $full_path));
+          }
+
+        }
+         rmdir($full_path);
+      }
+    }
+  }
 }
 
 /**
@@ -77,8 +109,6 @@ function islandora_yui_uploader_upload() {
   exit();
 }
 
-
-
 /**
  * AN EXAMPLE OF HOW YOU COULD USE THIS IN YOUR MODULE
  * @param <type> $form
@@ -88,17 +118,17 @@ function islandora_yui_uploader_upload() {
  * we check in the handler for the appropriate cmodel to act on
  *
  */
-/*function islandora_oai_form_alter(&$form, $form_state, $form_id){
-module_load_include('inc','islandora_yui_uploader','IslandoraYuiUploader');
-$uploader = new IslandoraYuiUploader();
+/* function islandora_oai_form_alter(&$form, $form_state, $form_id){
+  module_load_include('inc','islandora_yui_uploader','IslandoraYuiUploader');
+  $uploader = new IslandoraYuiUploader();
   if ($form_id == "fedora_repository_ingest_form") {
 
-    if (isset($form_state['values']['models']) && strstr($form_state['values']['models'], '/', TRUE) == 'demo:DualResImage') {
-    $form['#suffix'] = $uploader->islandora_yui_uploader_add_js($form_state['values']); //the div and js are loaded after the form element closes.  Doing it in the form seemed to cause problems
-    }
-    //$form['#submit'][] = 'sidora_rels_ext_handler'; //add a new handler
+  if (isset($form_state['values']['models']) && strstr($form_state['values']['models'], '/', TRUE) == 'demo:DualResImage') {
+  $form['#suffix'] = $uploader->islandora_yui_uploader_add_js($form_state['values']); //the div and js are loaded after the form element closes.  Doing it in the form seemed to cause problems
   }
-}*/
+  //$form['#submit'][] = 'sidora_rels_ext_handler'; //add a new handler
+  }
+  } */
 
 /**
  * AN EXAMPLE OF HOW YOU COULD USE THIS IN YOUR MODULE ON A FORM SUBMIT
