@@ -7,6 +7,7 @@
 $yui_tmp_directory_name = $_POST['yui_form_build_id'];
 $drupal_tmp_dir = $_POST['dr_tmp_dir'];
 $new_directory = $drupal_tmp_dir.'/'.$yui_tmp_directory_name;
+//$new_directory = realpath($new_directory);
 //create a new directory based on the form_id and then put the files there so we can act on them when the form is submitted
 if(isset($drupal_tmp_dir)){
   if(!file_exists($new_directory)){

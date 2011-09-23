@@ -78,7 +78,7 @@ function islandora_yui_uploader_cron() {
 
 /**
  * Not used as the posts are sent to uploader.php
- * want to move the functionality here though
+ * want to move the functionality here though  maybe look at ahah functionality
  */
 function islandora_yui_uploader_upload() {
   $yui_tmp_directory_name = $_POST['yui_form_build_id']; //use this as it should be unique to our form
@@ -124,7 +124,7 @@ function islandora_yui_uploader_upload() {
   if ($form_id == "fedora_repository_ingest_form") {
 
   if (isset($form_state['values']['models']) && strstr($form_state['values']['models'], '/', TRUE) == 'demo:DualResImage') {
-  $form['#suffix'] = $uploader->islandora_yui_uploader_add_js($form_state['values']); //the div and js are loaded after the form element closes.  Doing it in the form seemed to cause problems
+  $form['#suffix'] = $uploader->islandora_yui_uploader_add_js($form_state); //the div and js are loaded after the form element closes.  Doing it in the form seemed to cause problems
   }
   //$form['#submit'][] = 'sidora_rels_ext_handler'; //add a new handler
   }

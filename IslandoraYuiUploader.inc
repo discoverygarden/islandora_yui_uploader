@@ -24,7 +24,7 @@ class IslandoraYuiUploader {
    *
    * Also creates a div so the multifile uploader has a place to exist
    */
-  function islandora_yui_uploader_add_js(&$form_values, $allowed_file_types = NULL) {
+  function islandora_yui_uploader_add_js(&$form_state, $allowed_file_types = NULL) {
     //$form_build_id = $form_values['form_token'];
     $tmp_directory = file_directory_temp();
     $allowed_files_string = $this->get_allowed_files_string($allowed_file_types);
@@ -33,7 +33,7 @@ class IslandoraYuiUploader {
     //so can be the same for different forms
     //$form_build_id = 'yui-form-' . drupal_hash_base64(uniqid(mt_rand(), TRUE) . mt_rand());
     $form_build_id = 'yui-form-' . drupal_get_token(mt_rand());
-    $form_values['yui_form_build_id'] = $form_build_id; //so we can use this when we submit the form
+    $form_state['values']['yui_form_build_id'] = $form_build_id; //so we can use this when we submit the form
     global $user;
     drupal_add_js(drupal_get_path('module', 'islandora_yui_uploader') . '/js/yahoo-dom-event.js');
     drupal_add_js(drupal_get_path('module', 'islandora_yui_uploader') . '/js/element-min.js');
